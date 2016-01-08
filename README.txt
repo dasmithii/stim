@@ -1,1 +1,28 @@
-stim -- an optimizing brainfuck-to-C compiler.
+OVERVIEW:
+
+    stim is an optimizing brainfuck-to-C compiler.
+
+
+
+QUICK START:
+
+    Get rolling:              python3 setup.py install
+
+    Compile to C:             stim input.bf output.c
+    Compile to executable:    stim input.bf output
+    Run file:                 stim input.bf
+    Run string:               stim ">>>>>++++"
+
+
+
+BRAINFUCK DIALECT:
+
+    Comments are C-style.
+    You can input code with positive integers before brainfuck
+    commands to indicate that the command should be repeated n times.
+
+
+
+IMPLEMENTATION
+
+    TODO

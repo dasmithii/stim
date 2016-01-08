@@ -1,0 +1,46 @@
+#!/usr/bin/env python3
+
+
+"""stim (optimizing brainfuck-to-C compiler).
+
+Usage:
+  stim <input> [<output>]
+  stim (-h | --help)
+  stim (-v | --version)
+
+Options:
+  -h --help        Display this text.
+  -v --version     Check version.
+  -m               Minimize generated C code. Human-readable is default.
+  <input>          Provide brainfuck (in path to file or string from).
+  <output>         Specify output location. .c files will 
+  -p               Note that input is pre-optimized.
+  -e               Expand optimized code to regular brainfuck.
+
+"""
+from docopt import docopt
+from stim import bf
+
+if __name__ == '__main__':
+    args = docopt(__doc__, version='stg-python 0.0.1')
+
+    iarg = args['<input>']
+    oarg = args['<output>']
+
+    code = iarg
+    if code.endswith('.bf'):
+        with open(iarg) as ifile:
+            code = ifile.read()
+
+    if not oarg:
+        bf.execute(code)
+    elif oarg.endswith('.c'):
+        bf.compile_to_C(code, output=oarg)
+    else:
+        bf.compile_to_executable(code, output=oarg)
+
+
+
+
+
+
