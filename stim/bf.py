@@ -118,7 +118,10 @@ def execute(code):
     if rc != 0:
         print('C-to-executable compilation failed.', file=sys.stderr)
     else:
-        rc = subprocess.call([x_path],stdin=sys.stdin, stdout=sys.stdout,stderr=sys.stderr)
+        try:
+            rc = subprocess.call([x_path],stdin=sys.stdin, stdout=sys.stdout,stderr=sys.stderr)
+        except KeyboardInterrupt:
+            pass # ignore CTRL-C
         if rc != 0:
             print('Error in .bf program execution.', file=sys.stderr)
         else:
