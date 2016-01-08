@@ -114,7 +114,7 @@ def execute(code):
     c_file.close()
 
     x_path = c_path[0:-2]
-    rc = subprocess.call(['make', x_path],stderr=sys.stderr)
+    rc = subprocess.call(['make', x_path, '-s'])
     if rc != 0:
         print('C-to-executable compilation failed.', file=sys.stderr)
     else:
