@@ -1,5 +1,6 @@
 from stim import csource
 from stim import opcode
+from stim import optimizations
 
 import tempfile
 import os
@@ -12,8 +13,61 @@ import string
 
 
 
+def compile_to_C(code):
+    code = lint(code)
+    ops = join_sisters(code)
+    c = ''
+    while len(ops) > 0:
+        p = len(ops)
+        for optimization in optimizations.each:
+            s, ops = optimization.match(ops)
+            c += s
+        if p == len(ops):
+            c += csource.convert_one(ops[0])
+            ops = ops[1:]
+    return csource.boilerplate.soround(c)
 
-def compile_to_C(code, output=None):
+
+def compile_to_executable(code, output):
+    c_path = _random_c_path()
+    with open(c_path, 'w') as c_file:
+        c_file.write(compile_to_C(code))
+    x_path = c_path[0:-2]
+    rc = subprocess.call(['make', x_path],stdout=sys.stdout,stderr=sys.stderr)
+    if rc != 0:
+        raise Exception('C-to-executable compilation failed.')
+    else:
+        subprocess.call(['mv', x_path, output], stderr=sys.stderr)
+    os.remove(c_path)
+
+
+def execute(code):
+    c_path = _random_c_path()
+    c_file = open(c_path, 'w')
+    with open(c_path, 'w') as c_file:
+        c_file.write(compile_to_C(code))
+
+    x_path = c_path[0:-2]
+    rc = subprocess.call(['make', x_path, '-s'])
+    if rc != 0:
+        print('C-to-executable compilation failed.', file=sys.stderr)
+    else:
+        try:
+            s = subprocess.check_output([x_path]).decode('utf-8')
+        except KeyboardInterrupt:
+            pass # ignore CTRL-C
+        if rc != 0:
+            raise ValueError('Error in .bf program execution.')
+        else:
+            subprocess.call(['rm', x_path])
+
+    os.remove(c_path)
+    return s
+
+
+
+
+def lint(code):
     # Remove C-style block comments.
     code = re.sub('/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/', '', code)
 
@@ -31,6 +85,11 @@ def compile_to_C(code, output=None):
         if (not c.isdigit()) and c not in opcode.CHAR_SET:
             raise ValueError("invalid brainfuck character: '" + c + "'")
 
+    return code
+
+
+
+def join_sisters(code):
     # Read in operations. Kill code variable. TODO: improve.
     ops = []
     while len(code) > 0:
@@ -65,70 +124,18 @@ def compile_to_C(code, output=None):
                 n += ops[1][0] if o1 == opcode.RIGHT else -ops[1][0]
                 ops[1][0] = (n,opcode.RIGHT) if n > 0 else (-n,opcode.LEFT)
             elif o1 in opcode.MUTATOR_CODES and o2 in opcode.MUTATOR_CODES:
-                n = ops[0][0] if o1 == opcode.INCREMENT else -ops[0][0]
-                n += ops[1][0] if o1 == opcode.DECREMENT else -ops[1][0]
-                ops[1] = (n,opcode.INCREMENT) if n > 0 else (-n,opcode.DECREMENT)
+                n = ops[0][0] if o1 == opcode.INC else -ops[0][0]
+                n += ops[1][0] if o1 == opcode.DEC else -ops[1][0]
+                ops[1] = (n,opcode.INC) if n > 0 else (-n,opcode.DEC)
         old = ops
         ops = list(filter(lambda x: x[0] > 0, ops))
         if len(ops) == len(old):
             break
 
-    #Generate C code.
-    compiled = csource.from_opcodes(ops)
-
-    if output:
-        with open(output, 'w') as ofile:
-            ofile.write(compiled)
-
-    return compiled
-
+    return ops
 
 
 def _random_c_path():
     return '/tmp/stim_' + ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(25)) + '.c'
-
-
-def compile_to_executable(code, output):
-    c_path = _random_c_path()
-    c_file = open(c_path, 'w')
-
-    c_file.write(compile_to_C(code))
-
-    c_file.close()
-
-    x_path = c_path[0:-2]
-    rc = subprocess.call(['make', x_path],stdout=sys.stdout,stderr=sys.stderr)
-    if rc != 0:
-        print('C-to-executable compilation failed.', file=sys.stderr)
-    else:
-        rc = subprocess.call(['mv', x_path, output], stderr=sys.stderr)
-    os.remove(c_path)
-
-
-def execute(code, output=False):
-    c_path = _random_c_path()
-    c_file = open(c_path, 'w')
-
-    c_file.write(compile_to_C(code))
-
-    c_file.close()
-
-    x_path = c_path[0:-2]
-    rc = subprocess.call(['make', x_path, '-s'])
-    if rc != 0:
-        print('C-to-executable compilation failed.', file=sys.stderr)
-    else:
-        try:
-            s = subprocess.check_output([x_path]).decode('utf-8')
-        except KeyboardInterrupt:
-            pass # ignore CTRL-C
-        if rc != 0:
-            print('Error in .bf program execution.', file=sys.stderr)
-        else:
-            rc = subprocess.call(['rm', x_path],stderr=sys.stderr)
-
-    os.remove(c_path)
-    return s
-
 
 

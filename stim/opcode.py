@@ -1,5 +1,5 @@
-INCREMENT = 0
-DECREMENT = 1
+INC = 0
+DEC = 1
 LEFT = 2
 RIGHT = 3
 READ = 4
@@ -9,7 +9,7 @@ CLOSE = 7
 
 
 CONTROL_CODES = [OPEN, CLOSE]
-MUTATOR_CODES = [INCREMENT, DECREMENT]
+MUTATOR_CODES = [INC, DEC]
 SHIFTER_CODES = [LEFT, RIGHT]
 IO_CODES = [READ, WRITE]
 
@@ -17,8 +17,8 @@ IO_CODES = [READ, WRITE]
 
 # Brainfuck character to opcode conversion.
 CHAR_OP_TABLE = {
-	'+': INCREMENT,
-	'-': DECREMENT,
+	'+': INC,
+	'-': DEC,
 	'<': LEFT,
 	'>': RIGHT,
 	',': READ,
@@ -32,7 +32,7 @@ def from_char(c):
 
 
 # Opcode to name conversion.
-OP_NAME_TABLE = ['INCREMENT', 'DECREMENT', 'LEFT', 'RIGHT', 'READ', 'WRITE', 'OPEN', 'CLOSE']
+OP_NAME_TABLE = ['INC', 'DEC', 'LEFT', 'RIGHT', 'READ', 'WRITE', 'OPEN', 'CLOSE']
 def to_name(n):
 	return OP_NAME_TABLE[n]
 

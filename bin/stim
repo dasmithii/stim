@@ -35,7 +35,8 @@ if __name__ == '__main__':
     if not oarg:
         print(bf.execute(code))
     elif oarg.endswith('.c'):
-        bf.compile_to_C(code, output=oarg)
+        with open(oarg,'w') as ofile:
+            ofile.write(bf.compile_to_C(code)
     else:
         bf.compile_to_executable(code, output=oarg)
 

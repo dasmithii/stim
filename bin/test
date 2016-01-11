@@ -33,10 +33,14 @@ if __name__ == '__main__':
         with open(p_name + '.out') as ifile:
             expected_output = ifile.read()
         p_name = p_name.split('/')[-1]
-        if bf.execute(brainfuck) == expected_output:
+        output = bf.execute(brainfuck)
+        if output == expected_output:
             print('  + ' + p_name + '  passed')
         else:
             print('  + ' + p_name + '  failed')
+            print('    expected="'+expected_output+'"')
+            print('    actual="'+output+'"')
+
 
 
 
