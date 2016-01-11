@@ -14,7 +14,6 @@ import string
 
 
 def compile_to_C(code, output=None):
-    print('code: ' + code)
     # Remove C-style block comments.
     code = re.sub('/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/', '', code)
 
@@ -106,7 +105,7 @@ def compile_to_executable(code, output):
     os.remove(c_path)
 
 
-def execute(code):
+def execute(code, output=False):
     c_path = _random_c_path()
     c_file = open(c_path, 'w')
 
@@ -120,7 +119,7 @@ def execute(code):
         print('C-to-executable compilation failed.', file=sys.stderr)
     else:
         try:
-            rc = subprocess.call([x_path],stdin=sys.stdin, stdout=sys.stdout,stderr=sys.stderr)
+            s = subprocess.check_output([x_path]).decode('utf-8')
         except KeyboardInterrupt:
             pass # ignore CTRL-C
         if rc != 0:
@@ -129,6 +128,7 @@ def execute(code):
             rc = subprocess.call(['rm', x_path],stderr=sys.stderr)
 
     os.remove(c_path)
+    return s
 
 
 

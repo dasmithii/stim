@@ -33,7 +33,7 @@ if __name__ == '__main__':
             code = ifile.read()
 
     if not oarg:
-        bf.execute(code)
+        print(bf.execute(code))
     elif oarg.endswith('.c'):
         bf.compile_to_C(code, output=oarg)
     else:

@@ -7,6 +7,7 @@ OVERVIEW:
 QUICK START:
 
     Get rolling:              python3 setup.py install
+    Test:                     python3 bin/test
 
     Compile to C:             stim input.bf output.c
     Compile to executable:    stim input.bf output
