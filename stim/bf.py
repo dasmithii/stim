@@ -14,6 +14,7 @@ import string
 
 
 def compile_to_C(code, output=None):
+    print('code: ' + code)
     # Remove C-style block comments.
     code = re.sub('/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/', '', code)
 
@@ -29,7 +30,7 @@ def compile_to_C(code, output=None):
     # Check for invalid characters.
     for c in code:
         if (not c.isdigit()) and c not in opcode.CHAR_SET:
-            raise 'invalid brainfuck character'
+            raise ValueError("invalid brainfuck character: '" + c + "'")
 
     # Read in operations. Kill code variable. TODO: improve.
     ops = []
@@ -46,7 +47,7 @@ def compile_to_C(code, output=None):
             ops.append((n,opcode.from_char(code[0])))
             code = code[1:]
         else:
-            raise 'invalid code!!!!'
+            raise ValueError('invalid code!!!! FUCK FUCK FUCK')
 
     # Combine neighboring sister operations until no more can be
     # combined.
