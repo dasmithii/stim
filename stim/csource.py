@@ -23,6 +23,7 @@ def SET(n):
     return '*ptr=' + str(n) + ';'
 
 
+
 def convert_one(op):
     if op[1] == opcode.INC:
         return INC(op[0])

@@ -46,7 +46,6 @@ set_to = Matcher(lambda v: csource.SET(v['n']), [(1,opcode.OPEN), (1,opcode.DEC)
 
 
 
-
 each = [zero, set_to]
 
 

@@ -22,7 +22,7 @@ from docopt import docopt
 from stim import bf
 
 if __name__ == '__main__':
-    args = docopt(__doc__, version='stim-python 0.0.1')
+    args = docopt(__doc__, version='stim-python 0.1.0')
 
     iarg = args['<input>']
     oarg = args['<output>']
@@ -36,7 +36,7 @@ if __name__ == '__main__':
         print(bf.execute(code))
     elif oarg.endswith('.c'):
         with open(oarg,'w') as ofile:
-            ofile.write(bf.compile_to_C(code)
+            ofile.write(bf.compile_to_C(code))
     else:
         bf.compile_to_executable(code, output=oarg)
 

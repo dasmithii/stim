@@ -5,8 +5,8 @@
 
 Usage:
   test
-  stim (-h | --help)
-  stim (-v | --version)
+  test (-h | --help)
+  test (-v | --version)
 
 Options:
   -h --help        Display this text.
@@ -20,6 +20,7 @@ import os
 
 
 if __name__ == '__main__':
+    args = docopt(__doc__, version='stim-python-tests 0.1.0')
     d_path = os.path.dirname(os.path.abspath(__file__))[0:-4] + '/test-programs'
     f_paths = os.listdir(d_path)
     f_paths = filter(lambda x: x.endswith('.bf'), f_paths)
